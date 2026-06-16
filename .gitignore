@@ -1,0 +1,52 @@
+# Compiled objects / binaries
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dylib
+*.dll
+*.exe
+a.out
+*.out
+*.out.dSYM/
+
+# Build folders
+/build/
+/bin/
+/out/
+/Debug/
+/Release/
+/CMakeFiles/
+/CMakeCache.txt
+Makefile.user
+cmake_install.cmake
+
+# IDE / editor
+.vscode/
+.idea/
+*.suo
+*.user
+*.vcxproj*
+*.ncb
+*.sdf
+*.DS_Store
+*~
+*.swp
+
+# Logs, caches, generated
+*.log
+*.cache
+.tags
+ctags
+*.tmp
+
+# macOS / Xcode artifacts
+*.plist
+*.xcodeproj/
+*.xcworkspace/
+
+# data/config files you don't want
+*.json
+*.yml
+*.yaml
