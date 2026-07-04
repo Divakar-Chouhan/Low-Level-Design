@@ -1,0 +1,170 @@
+Snake and Ladder LLD – SDE-2 Interview Questions & Answers
+
+Q1. Why did you remove DynamicCell?
+
+Answer:
+DynamicCell only shared setEndPosition() and did not own any meaningful
+behavior. A simpler hierarchy is easier to maintain:
+
+    Cell
+    ├── NormalCell
+    ├── SnakeCell
+    └── LadderCell
+
+------------------------------------------------------------------------
+
+Q2. Why use BoardGenerationStrategy?
+
+Answer:
+It separates board generation from the Board class. New strategies like
+FixedBoardGenerationStrategy or TournamentBoardGenerationStrategy can be
+added without modifying Board, following the Open/Closed Principle.
+
+------------------------------------------------------------------------
+
+Q3. Why use getSymbol() instead of storing a type?
+
+Answer:
+Each subclass knows how it should be represented.
+
+-   Avoids duplicated state.
+-   Prevents inconsistencies (e.g., a SnakeCell accidentally storing
+    'L').
+
+------------------------------------------------------------------------
+
+Q4. Why expose getCell() instead of the matrix?
+
+Answer:
+It encapsulates the board implementation. Game depends only on the Board
+API rather than its internal storage.
+
+------------------------------------------------------------------------
+
+Q5. Why remove startPosition from Cell?
+
+Answer:
+The board index already represents the source position, so storing it
+again duplicates information. Only the destination (endPosition) is
+required.
+
+------------------------------------------------------------------------
+
+Q6. Why should Dice be an object instead of a static method?
+
+Answer:
+A Dice object enables polymorphism.
+
+Possible implementations:
+
+-   NormalDice
+-   LoadedDice
+-   WeightedDice
+-   TestDice
+
+------------------------------------------------------------------------
+
+Q7. How would you support Portal, Trap, Ice, Bomb and Bonus cells?
+
+Introduce composition using a CellBehaviour interface.
+
+    class CellBehaviour {
+    public:
+        virtual void apply(Player& player) = 0;
+    };
+
+    class Cell {
+        Position position;
+        std::vector<CellBehaviour*> behaviours;
+    };
+
+------------------------------------------------------------------------
+
+Q8. Why is composition better than inheritance?
+
+-   Follows the Open/Closed Principle
+-   Avoids a large inheritance hierarchy
+-   Allows multiple behaviors on a single cell
+
+Example:
+
+    Cell
+     ├── SnakeBehaviour
+     ├── TrapBehaviour
+     └── BonusBehaviour
+
+------------------------------------------------------------------------
+
+Q9. Would you use CellBehaviour immediately?
+
+Answer: No.
+
+For only Snake and Ladder, inheritance is simpler.
+
+When many cell types or multiple behaviors per cell are introduced,
+refactor to composition.
+
+This follows YAGNI (You Aren’t Gonna Need It).
+
+------------------------------------------------------------------------
+
+Q10. Where would you implement “Rolling a 6 gives another turn”?
+
+Initially inside Game::playTurn().
+
+If gameplay rules grow significantly, extract:
+
+-   TurnManager
+-   MoveProcessor
+-   RuleEngine
+
+------------------------------------------------------------------------
+
+Q11. How would you implement Undo?
+
+Store executed moves inside a MoveHistory stack (or use the Command
+Pattern) and restore the previous state.
+
+------------------------------------------------------------------------
+
+Q12. How would you implement Save/Load Game?
+
+Create a GameState object containing:
+
+-   Board
+-   Players
+-   Current Turn
+-   Dice State
+
+Serialize and deserialize this object.
+
+------------------------------------------------------------------------
+
+Q13. Why didn’t you introduce factories for everything?
+
+Because the current requirements don’t justify them.
+
+Only introduce abstractions when there are multiple implementations to
+support.
+
+Avoid overengineering.
+
+------------------------------------------------------------------------
+
+Q14. Strong SDE-2 Interview Closing Statement
+
+  “I’ve intentionally kept the design minimal and introduced only the
+  abstractions justified by the current requirements. If future
+  requirements introduce multiple dice types, player types, or cell
+  behaviors, I’d evolve the design at that point instead of adding
+  unnecessary abstractions upfront.”
+
+------------------------------------------------------------------------
+
+Key Takeaways
+
+-   Keep the design simple.
+-   Apply SOLID where it adds value.
+-   Avoid premature abstractions.
+-   Prefer composition when inheritance no longer scales.
+-   Explain trade-offs instead of chasing patterns.
